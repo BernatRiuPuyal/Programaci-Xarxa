@@ -1,53 +1,135 @@
 
 #include <SFML/Network.hpp>
 #include <iostream>
+#include <thread>
+#include <mutex>
+#include "main.h"
+
+int score;
+
+std::mutex mutex;
+
+std::vector<_question> questions;
+
+int numQuestion;
+
+bool end = false;
+
+bool responseAnswered = false;
+
+void sharedWrite(std::string msg) {
+
+	mutex.lock();
+	std::cout << msg << std::endl;
+	mutex.unlock();
+
+}
+void sharedEndl() {
+	mutex.lock();
+	std::cout << std::endl;
+	mutex.unlock();
+}
+
+char IntToStr(int i) {
+
+	char numOption = i + '0';
+	return numOption;
+}
 
 
 
 
 int main() {
 
+	// SET QUESTIONS
+	numQuestion = 0;
+	score = 0;
 
-	std::cout << "This is the Listener" << std::endl;
+	questions.push_back({ "3+4 ?", {"2", "6", "7" }, 3, 1 });
+	questions.push_back({ "3*4 ? ", {"7", "12", "15" }, 2, 1 });
+	questions.push_back({ "2-4 ? ", {"2", "-2", "6" }, 2 , 1});
+	questions.push_back({ "9+0 ? ", {"9", "90", "10" }, 1, 1 });
+	questions.push_back({ "How are you?", {"well", "so so", "sad" }, 1 , 1});
+	
+	   
 
-	sf::TcpListener listener;
+	std::cout << "Game Started" << std::endl;
 
-	sf::Socket::Status status = listener.listen(50000);
+	score = 0;
+	
+	std::thread clockManager(clockManager);
 
-	sf::TcpSocket socket;
+	clockManager.detach();
 
-	status = listener.accept(socket);
+	
+	
 
 
-	if (status == sf::Socket::Done) {
-		socket.send("hola", 4);
+	while (!end) {
 
-		char buffer[20];
-		size_t size;
+		std::string input;
 
-		socket.receive(buffer, 20, size);
+		std::cin >> input;
 
-		buffer[size] = '\0';
+		if (input == "q") { // quit
+			end = true;
+		}
+		else {
+			int response = atoi(input.c_str());
 
-		std::cout << buffer << std::endl;
+			if (response == questions[numQuestion].answer) {
+				score += questions[numQuestion].score;
+				sharedWrite((std::string)"Correct Answer! | Score: " + std::to_string(score));
+			}
+			else {
+				sharedWrite((std::string)"Wrong Answer! | Score: " + std::to_string(score));
+			}
+		}
+			   
+		responseAnswered = true;
+
 	}
-	else {
-		std::cout << status << std::endl;
-	}
 
+	
 
 }
 
-//int main() { // reciever
-//
-//	sf::TcpSocket sock;
-//	sf::Socket::Status status = sock.connect("127.0.0.1", 50000, sf::seconds(15.f));
-//
-//
-//	sock.send("hola", 4);
-//	char buffer[10];
-//	size_t size;
-//
-//	sock.receive(buffer, 10, size);
-//	std::cout << buffer << std::endl;
-//}
+void clockManager() { // message each 5 seconds 
+
+	sf::Clock clock;
+
+	clock.restart();
+	responseAnswered = true;
+
+	while (numQuestion < questions.size()) {
+		if (clock.getElapsedTime().asSeconds() > 5 /* number of seconds to wait*/) {
+
+			if (!responseAnswered) {
+				score--;
+				sharedEndl();
+				sharedWrite("Question not answered! Score: " + std::to_string(score));
+				sharedEndl();
+			}
+
+			//ask question
+			sharedEndl();
+			sharedWrite(questions[numQuestion].question);
+
+			for (int i = 1;i <= 3; i++) {		
+				char numOption = IntToStr(i);
+				sharedWrite( numOption + (std::string)") " + questions[numQuestion].options[i - 1]);
+			}
+			sharedEndl();
+			numQuestion++;
+			responseAnswered = false;
+
+			//reset clock
+			clock.restart();
+
+		}
+	}
+
+	end = true;
+
+
+}

@@ -1,6 +1,7 @@
 
 #include <SFML/Network.hpp>
 #include <iostream>
+#include <thread>
 
 
 
@@ -34,9 +35,9 @@
 //
 //}
 
-int main() { // reciever
+int main() { // Client
 
-	std::cout << "This is the socket" << std::endl;
+	std::cout << "This is the Client" << std::endl;
 
 	sf::TcpSocket sock;
 	sf::Socket::Status status = sock.connect("127.0.0.1", 50000, sf::seconds(15.f));
@@ -51,4 +52,36 @@ int main() { // reciever
 	buffer[size] = '\0';
 
 		std::cout << buffer << std::endl;
+
+
+	std::thread tAmb(MsgAmb);
+	
+	tAmb.detach(); // 
+
+
+	do {
+
+		//MENU
+
+		//REcoger opción
+
+
+	}while()
+
+}
+
+void MsgAmb() { // message each 5 seconds 
+
+	sf::Clock clock;
+
+	clock.restart();
+
+	while (true) {
+		if (clock.getElapsedTime().asSeconds() > 5 /* number of seconds to wait*/) {
+			//msg
+			//reset clock
+		}
+	}
+
+
 }
