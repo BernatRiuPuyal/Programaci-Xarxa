@@ -4,24 +4,51 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <mutex>
 
 #define MAX_MENSAJES 30
+
+std::vector<std::string> aMensajes;
+
+std::mutex mutex;
+
+void sharedWrite(sf::String msg) {
+
+	mutex.lock();
+
+	aMensajes.push_back(msg);
+
+	mutex.unlock();
+
+}
+
 
 void reading(sf::TcpSocket* sock) {
 
 	while (true) {
 
+		sf::Packet pack;
 
+		sf::String str;
 
+		if (sock->receive(pack) == sf::Socket::Done) {
 
+			pack >> str;
 
+			sharedWrite(str);
+		}
+		else if (sock->receive(pack) == sf::Socket::Disconnected) {
+			sharedWrite("OTHER USER DISCONECTED");
+			break;
+		}
 	}
+
 }
 
 
 int main()
 {
-	std::vector<std::string> aMensajes;
+	
 	
 	sf::Vector2i screenDimensions(800, 600);
 
@@ -70,7 +97,7 @@ int main()
 
 	t.detach();
 
-	//__
+	
 	
 	while (window.isOpen())
 	{
@@ -87,11 +114,25 @@ int main()
 					window.close();
 				else if (evento.key.code == sf::Keyboard::Return)
 				{
-					aMensajes.push_back(mensaje);
+					sharedWrite(mensaje);
+
+
+					
 					if (aMensajes.size() > 25)
 					{
 						aMensajes.erase(aMensajes.begin(), aMensajes.begin() + 1);
 					}
+
+					// SEND
+
+					sf::Packet pack;
+
+					pack << mensaje;
+
+					socket.send(pack);
+
+					pack.clear();
+
 					mensaje = ">";
 				}
 				break;
