@@ -15,13 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CodigoChat1solo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <Font Include="cour.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="courbd.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="courbi.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="couri.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
   </ItemGroup>
 </Project>

@@ -128,10 +128,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h" />
+    <ClCompile Include="CodigoChat1solo.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="cour.ttf" />
+    <Font Include="courbd.ttf" />
+    <Font Include="courbi.ttf" />
+    <Font Include="couri.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
