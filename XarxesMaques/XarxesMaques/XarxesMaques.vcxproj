@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CodigoChat1solo.cpp" />
+    <ClCompile Include="peer2peerServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="cour.ttf" />
